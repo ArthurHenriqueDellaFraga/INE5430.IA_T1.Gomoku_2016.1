@@ -7,8 +7,8 @@ import java.util.HashMap;
 import Enumeracao.ConfiguracaoDeJogo;
 import Enumeracao.Sentido;
 import Enumeracao.Sentido.*;
-import Evento.PosicaoOcupadaException;
-import Evento.VitoriaAtingidaException;
+import Excecao.PosicaoOcupadaException;
+import Excecao.VitoriaAtingidaException;
 import Primitiva.*;
 
 public class Gomoku {

@@ -7,10 +7,13 @@ import javax.swing.*;
 
 import Controle.TabuleiroControle;
 import Enumeracao.Alinhamento;
+import PadraoDeProjeto.Propagador;
 import Primitiva.Peca;
 
 public class TabuleiroVisao extends JPanel {
 	private final TabuleiroControle CONTROLE;
+	
+	public final Propagador<Point> PROPAGADOR = new Propagador<Point>();
 	
 	private final int MARGIN = 5;
 	private final double PIECE_FRAC = 0.9;
@@ -18,6 +21,8 @@ public class TabuleiroVisao extends JPanel {
 	public TabuleiroVisao(TabuleiroControle _controle) {
 		super();
 		CONTROLE = _controle;
+		
+		addMouseListener(new TabuleiroMouseListener());
 		
 		InterfaceDaAplicacao.invocarInstancia().FRAME_FAMILIAR.add(this);
 		InterfaceDaAplicacao.invocarInstancia().FRAME_FAMILIAR.setVisible(true);
@@ -68,27 +73,10 @@ public class TabuleiroVisao extends JPanel {
 				}
 			}
 	}
-
-	public Point coletarPosicaoDoTabuleiro(){
-		TabuleiroListener listener = new TabuleiroListener();
-		addMouseListener(listener);
-		
-		while(listener.posicaoPressionada == null){
-			try {
-				Thread.sleep(10);
-			} catch (InterruptedException e) {
-				e.printStackTrace();
-			}
-		}
-		
-		removeMouseListener(listener);
-		return listener.posicaoPressionada;
-	}
 	
 	// SUBCLASSES
 	
-	class TabuleiroListener extends MouseAdapter {
-		protected Point posicaoPressionada;
+	class TabuleiroMouseListener extends MouseAdapter {
 		
 		public void mouseReleased(MouseEvent e) {
 			int tamanho = CONTROLE.getTamanho();
@@ -97,16 +85,15 @@ public class TabuleiroVisao extends JPanel {
 			double panelHeight = getHeight();
 			double boardWidth = Math.min(panelWidth, panelHeight) - 2 * MARGIN;
 			double squareWidth = boardWidth / tamanho;
-			double pieceDiameter = PIECE_FRAC * squareWidth;
+			//double pieceDiameter = PIECE_FRAC * squareWidth;
 			double xLeft = (panelWidth - boardWidth) / 2 + MARGIN;
 			double yTop = (panelHeight - boardWidth) / 2 + MARGIN;
+			
 			
 			int col = (int) Math.round((e.getX() - xLeft) / squareWidth - 0.5);
 			int row = (int) Math.round((e.getY() - yTop) / squareWidth - 0.5);
 			
-			posicaoPressionada = new Point(row, col);
-			
-			//repaint();
+			PROPAGADOR.propagar(new Point(row, col));
 		}
 	}
 }

@@ -28,7 +28,7 @@ public class TabuleiroControle {
 	}
 
 	public Point coletarPosicaoDoTabuleiro() {
-		return VISAO.coletarPosicaoDoTabuleiro();
+		return VISAO.PROPAGADOR.sintonizar();
 	}
 
 	public void atualizarVisualizacao() {

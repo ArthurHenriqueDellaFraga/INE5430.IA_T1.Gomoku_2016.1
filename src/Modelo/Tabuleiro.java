@@ -4,7 +4,7 @@ import java.awt.Point;
 import java.util.HashMap;
 
 import Controle.TabuleiroControle;
-import Evento.PosicaoOcupadaException;
+import Excecao.PosicaoOcupadaException;
 import Primitiva.Peca;
 
 public class Tabuleiro {

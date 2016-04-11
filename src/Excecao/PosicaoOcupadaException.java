@@ -1,4 +1,4 @@
-package Evento;
+package Excecao;
 
 public class PosicaoOcupadaException extends Exception {
 	

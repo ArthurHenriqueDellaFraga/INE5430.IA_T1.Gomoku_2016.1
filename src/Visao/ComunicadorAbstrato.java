@@ -1,7 +1,8 @@
 package Visao;
 
 import javax.swing.JOptionPane;
-import Evento.OperacaoCanceladaException;
+
+import Excecao.OperacaoCanceladaException;
 
 public abstract class ComunicadorAbstrato {
 	

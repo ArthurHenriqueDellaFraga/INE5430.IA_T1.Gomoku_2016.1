@@ -1,7 +1,7 @@
 package Controle;
 
 import Enumeracao.ConfiguracaoDeJogo;
-import Evento.*;
+import Excecao.*;
 import Modelo.Gomoku;
 import Visao.InterfaceDaAplicacao;
 
@@ -27,15 +27,11 @@ public class GerenteDaAplicacao{
 		Gomoku gomoku;
 		
 		try{
-			switch(INTERFACE_DA_APLICACAO.iniciar()){
-				case 0:		gomoku = new Gomoku(ConfiguracaoDeJogo.Humano_Humano);
-							break;
-							
+			switch(INTERFACE_DA_APLICACAO.iniciar()){							
 				default:	gomoku = new Gomoku(ConfiguracaoDeJogo.Humano_Humano);
 			}
 			
 			try{
-				System.out.println("GerenteDaAplicacao.iniciar -> gomoku.inicar()");
 				gomoku.iniciar();
 			}
 			catch(VitoriaAtingidaException e){
