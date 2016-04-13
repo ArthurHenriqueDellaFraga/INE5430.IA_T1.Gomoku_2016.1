@@ -1,0 +1,9 @@
+*.class
+*.project
+*.orig
+**/.classpath
+**/.factorypath
+.settings
+
+bin/
+build/
