@@ -10,6 +10,7 @@ import Enumeracao.Alinhamento;
 import PadraoDeProjeto.Propagador;
 import Primitiva.Peca;
 
+//Adaptado de http://cs.gettysburg.edu/~tneller/cs111/gomoku/
 public class TabuleiroVisao extends JPanel {
 	private final TabuleiroControle CONTROLE;
 	
