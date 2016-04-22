@@ -2,7 +2,7 @@ package Modelo;
 
 import Controle.JogadorControle;
 import Enumeracao.Alinhamento;
-import Primitiva.ContextoDoJogo;
+import Modelo.Gomoku.ContextoDoJogo;
 import Primitiva.Jogada;
 import Primitiva.Peca;
 
@@ -19,9 +19,7 @@ public abstract class Jogador {
 
 	// FUNCOES
 	
-	protected void ingressarJogo(Gomoku gomoku){
-		CONTROLE.TABULEIRO_CONTROLE = gomoku.TABULEIRO.CONTROLE;
-	}
+	protected abstract void ingressarJogo(Gomoku gomoku);
 
 	public abstract Jogada definirJogada(ContextoDoJogo contextoDoJogo);
 

@@ -7,8 +7,8 @@ public enum Alinhamento {
 	
 	//FUNCOES
 		
-	public static Alinhamento alinhamentoOposto(Alinhamento alinhamento){
-		switch(alinhamento){
+	public Alinhamento oposto(){
+		switch(this){
 			case Nenhum:	return Nenhum;
 			case Branco:	return Preto;
 			case Preto:		return Branco;

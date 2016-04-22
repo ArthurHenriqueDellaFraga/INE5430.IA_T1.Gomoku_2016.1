@@ -1,6 +1,7 @@
 package Modelo;
 
 import Enumeracao.Alinhamento;
+import Modelo.Gomoku.ContextoDoJogo;
 import Primitiva.*;
 
 public class Humano extends Jogador{
@@ -11,6 +12,10 @@ public class Humano extends Jogador{
 	
 	//FUNCOES
 	
+	protected void ingressarJogo(Gomoku gomoku){
+		CONTROLE.TABULEIRO_CONTROLE = gomoku.TABULEIRO.CONTROLE;
+	}
+	
 	public Jogada definirJogada(ContextoDoJogo contextoDoJogo){
 		try{
 			return new Jogada(
@@ -20,7 +25,7 @@ public class Humano extends Jogador{
 			);
 		}
 		catch(NullPointerException e){
-			System.out.println("ERRO: Jogador não introduzido a um jogo");
+			System.out.println("ERRO: Jogador " + IDENTIFICACAO + " não introduzido a um jogo");
 		}
 		return null;
 	}

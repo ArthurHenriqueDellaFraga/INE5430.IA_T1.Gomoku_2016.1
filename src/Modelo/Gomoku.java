@@ -4,6 +4,7 @@ import java.awt.Point;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+import Enumeracao.Alinhamento;
 import Enumeracao.ConfiguracaoDeJogo;
 import Enumeracao.Sentido;
 import Enumeracao.Sentido.*;
@@ -16,7 +17,7 @@ public class Gomoku {
 	public final ArrayList<Jogador> LISTA_DE_JOGADORES;
 	public final HashMap<Jogada, ContextoDoJogo> HISTORICO_DE_JOGADAS;
 	
-	public final int TAMANHO_SEQUENCIA_VITORIA = 5;
+	public final static int TAMANHO_SEQUENCIA_VITORIA = 5;
 	
 	public Gomoku(ConfiguracaoDeJogo configuracao){
 		TABULEIRO = new Tabuleiro();
@@ -34,7 +35,7 @@ public class Gomoku {
 	}
 	
 	public ContextoDoJogo getContextoDoJogo() {
-		return new ContextoDoJogo(TABULEIRO.clone(), HISTORICO_DE_JOGADAS.size());
+		return new ContextoDoJogo(TABULEIRO.clone(), HISTORICO_DE_JOGADAS.size(), getJogadorDaVez().ALINHAMENTO);
 	}
 	
 	//FUNCOES
@@ -80,7 +81,32 @@ public class Gomoku {
 			if(tamanhoSequencia >= TAMANHO_SEQUENCIA_VITORIA){
 				throw new VitoriaAtingidaException(jogada.JOGADOR);
 			}
+		}	
+	}
+	
+	//SUBCLASSES
+	
+	public static class ContextoDoJogo {
+		public final Tabuleiro TABULEIRO;
+		public final int TURNO;
+		public final Alinhamento ALINHAMENTO_DA_VEZ;
+
+		public ContextoDoJogo(Tabuleiro _tabuleiro, int _turno, Alinhamento _alinhamentoDaVez){
+			TABULEIRO = _tabuleiro;
+			TURNO = _turno;
+			ALINHAMENTO_DA_VEZ = _alinhamentoDaVez;
 		}
-		
+
+		private ContextoDoJogo(ContextoDoJogo contextoDoJogo){
+			TABULEIRO = contextoDoJogo.TABULEIRO.clone();
+			TURNO = contextoDoJogo.TURNO;
+			ALINHAMENTO_DA_VEZ = contextoDoJogo.ALINHAMENTO_DA_VEZ;
+		}
+
+		// OUTROS
+
+		public ContextoDoJogo clone() {
+			return new ContextoDoJogo(this);
+		}
 	}
 }

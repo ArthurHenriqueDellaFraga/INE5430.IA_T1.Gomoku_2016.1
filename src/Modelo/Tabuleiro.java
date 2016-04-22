@@ -2,8 +2,13 @@ package Modelo;
 
 import java.awt.Point;
 import java.util.HashMap;
+import java.util.HashSet;
+
+import org.omg.PortableInterceptor.SYSTEM_EXCEPTION;
 
 import Controle.TabuleiroControle;
+import Enumeracao.Alinhamento;
+import Enumeracao.Sentido;
 import Excecao.PosicaoOcupadaException;
 import Primitiva.Peca;
 
@@ -36,7 +41,18 @@ public class Tabuleiro {
 	
 	
 	public Point getPosicao(Peca peca) {
-		return CONFIGURACAO.get(peca.hashCode());
+		return CONFIGURACAO.get(peca);
+	}
+	
+	public HashSet<Point> getConjuntoDePosicoesDasPecas(Alinhamento alinhamento){
+		HashSet<Point> conjuntoDePosicoes = new HashSet<Point>();
+		
+		for(Peca peca : CONFIGURACAO.keySet()){
+			if(peca.ALINHAMENTO == alinhamento)
+				conjuntoDePosicoes.add(getPosicao(peca));
+		}
+		
+		return conjuntoDePosicoes;
 	}
 
 	//FUNCOES
@@ -53,13 +69,13 @@ public class Tabuleiro {
 	
 	//VALIDACOES
 
-	private void validarPosicaoExistente(Point posicao) throws IndexOutOfBoundsException{
+	protected void validarPosicaoExistente(Point posicao) throws IndexOutOfBoundsException{
 		if(posicao.x < 0 || posicao.x > TAMANHO || posicao.y < 0 || posicao.y > TAMANHO){
 				throw new IndexOutOfBoundsException("A posicao escolhida esta fora das dimensoes do tabuleiro.");
 		}
 	}
 
-	private void validarPosicaoLivre(Point posicao) throws PosicaoOcupadaException {
+	protected void validarPosicaoLivre(Point posicao) throws PosicaoOcupadaException {
 		if(ESTRUTURA.containsKey(posicao.hashCode())){
 			throw new PosicaoOcupadaException();
 		}
