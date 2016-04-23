@@ -1,7 +1,6 @@
 package Enumeracao;
 
 public enum Alinhamento {
-	Nenhum,
 	Branco,
 	Preto;
 	
@@ -9,7 +8,6 @@ public enum Alinhamento {
 		
 	public Alinhamento oposto(){
 		switch(this){
-			case Nenhum:	return Nenhum;
 			case Branco:	return Preto;
 			case Preto:		return Branco;
 		}

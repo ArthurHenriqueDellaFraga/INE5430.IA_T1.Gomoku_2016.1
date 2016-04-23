@@ -18,6 +18,11 @@ public enum ConfiguracaoDeJogo {
 				add(new Humano("Jogador 1", Alinhamento.Branco));
 				add(new InteligenciaArtificial("Jogador 2", Alinhamento.Preto));
 		}}
+	), 
+	Debug (
+			new ArrayList<Jogador>(){{
+				add(new Humano("Jogador 1", Alinhamento.Branco));
+			}}
 	);
 	
 	public final ArrayList<Jogador> LISTA_DE_JOGADORES;

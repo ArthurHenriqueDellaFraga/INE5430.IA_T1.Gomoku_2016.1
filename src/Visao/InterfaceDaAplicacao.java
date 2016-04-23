@@ -29,6 +29,6 @@ public class InterfaceDaAplicacao extends ComunicadorAbstrato{
 				+ "\n\n" + "Arthur Henrique Della Fraga \t 11200623"
 				+ "\n" + "Nathan Molinari \t 13100769";
 		
-		return apresentarDialogoOpitativo(mensagemInicializacao, "TRABALHO 1 • METODOS DE BUSCA", new String[]{"Humano vs Humano", "Humano vs Maquina"});
+		return apresentarDialogoOpitativo(mensagemInicializacao, "TRABALHO 1 • METODOS DE BUSCA", new String[]{"Humano vs Humano", "Humano vs Maquina", "DEBUG"});
 	}
 }

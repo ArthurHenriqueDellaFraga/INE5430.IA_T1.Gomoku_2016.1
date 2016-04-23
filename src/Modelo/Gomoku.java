@@ -10,12 +10,15 @@ import Enumeracao.Sentido;
 import Enumeracao.Sentido.*;
 import Excecao.PosicaoOcupadaException;
 import Excecao.VitoriaAtingidaException;
+import PadraoDeProjeto.Propagador;
 import Primitiva.*;
 
 public class Gomoku {
 	public final Tabuleiro TABULEIRO;
 	public final ArrayList<Jogador> LISTA_DE_JOGADORES;
 	public final HashMap<Jogada, ContextoDoJogo> HISTORICO_DE_JOGADAS;
+	
+	public final Propagador<Jogada> PROPAGADOR = new Propagador<Jogada>();
 	
 	public final static int TAMANHO_SEQUENCIA_VITORIA = 5;
 	

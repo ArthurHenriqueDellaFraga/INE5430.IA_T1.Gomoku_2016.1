@@ -2,16 +2,22 @@ package Modelo;
 
 import java.awt.Point;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
+
+import javax.swing.plaf.synth.SynthOptionPaneUI;
 
 import Enumeracao.Alinhamento;
 import Enumeracao.Sentido;
 import Enumeracao.Sentido.Direcao;
+import Excecao.PosicaoOcupadaException;
 import Modelo.Gomoku.ContextoDoJogo;
 import Primitiva.Jogada;
 import Primitiva.Peca;
 
 public class InteligenciaArtificial extends Jogador{
+	
+		public final int PROFUNDIDADE = 5;
 		
 		public InteligenciaArtificial(String _identificacao, Alinhamento _alinhamento){
 			super(_identificacao, _alinhamento);
@@ -27,7 +33,7 @@ public class InteligenciaArtificial extends Jogador{
 			try{
 				return new Jogada(
 						this,
-						refletirSobreAsPossibilidades(new NodoMiniMax(contextoDoJogo), Gomoku.TAMANHO_SEQUENCIA_VITORIA).melhorJogada,
+						refletirSobreAsPossibilidades(new NodoMiniMax(contextoDoJogo), PROFUNDIDADE).melhorJogada,
 						gerarPeca()
 				);
 			}
@@ -38,10 +44,11 @@ public class InteligenciaArtificial extends Jogador{
 			return null;
 		}
 		
-		public NodoMiniMax refletirSobreAsPossibilidades(NodoMiniMax nodo, int intensidade){
+		public NodoMiniMax refletirSobreAsPossibilidades(NodoMiniMax nodo, int iteracao){
+			
 			ArrayList<Point> listaDePosicoes = new ArrayList<Point>(){{
-				for(int i=1; i < Gomoku.TAMANHO_SEQUENCIA_VITORIA; i++){
-					addAll(identificarPosicoesProximas(nodo.CONTEXTO_DO_JOGO.TABULEIRO, i));
+				for(int distancia=1; distancia < 2; distancia++){
+					addAll(nodo.CONTEXTO_DO_JOGO.TABULEIRO.getConjuntoDePosicoesRelativoAsPecas(nodo.MEU_TURNO ? ALINHAMENTO : ALINHAMENTO.oposto(), distancia, true));
 				}
 			}};
 			
@@ -54,7 +61,7 @@ public class InteligenciaArtificial extends Jogador{
 			}
 			
 			for (Point posicao : listaDePosicoes) {
-				if(nodo.podaAlfaBeta[0] < nodo.podaAlfaBeta[1] && intensidade > 0){
+				if(nodo.podaAlfaBeta[0] < nodo.podaAlfaBeta[1] && iteracao > 0){
 					nodo.adicionarReferencia(
 							refletirSobreAsPossibilidades(
 									new NodoMiniMax(
@@ -71,11 +78,11 @@ public class InteligenciaArtificial extends Jogador{
 											}},
 											nodo.podaAlfaBeta
 									){{
-										if(intensidade == 1){
+										if(iteracao == 1){
 											funcaoDeUtilidade();
 										}
 									}},
-									intensidade -1
+									iteracao -1
 							)
 					);
 				}
@@ -86,39 +93,10 @@ public class InteligenciaArtificial extends Jogador{
 			return nodo;
 		}
 		
-		public HashSet<Point> identificarPosicoesProximas(Tabuleiro tabuleiro, int distancia){
-			HashSet<Point> posicoesProximas = new HashSet<Point>();
-			
-			for(Point posicao : tabuleiro.getConjuntoDePosicoesDasPecas(ALINHAMENTO)){
-				
-				for(Sentido sentido : Sentido.values()){
-					for(Direcao direcao : sentido.DIRECOES){
-						
-						Point posicaoAuxiliar = new Point(
-							posicao.x + direcao.REFERENCIA_CARTESIANA.x * distancia,
-							posicao.y + direcao.REFERENCIA_CARTESIANA.y * distancia
-						);
-						
-						try{
-							tabuleiro.validarPosicaoExistente(posicaoAuxiliar);
-							tabuleiro.validarPosicaoLivre(posicaoAuxiliar);
-						} 
-						catch(Exception e){
-							break;
-						}
-						
-						posicoesProximas.add(posicaoAuxiliar);
-					}
-				}
-			}
-			
-			return posicoesProximas;
-		}
-		
 		//SUBCLASSES
 		
 		private class NodoMiniMax {
-			public final ArrayList<NodoMiniMax> REFERENCIAS = new ArrayList<NodoMiniMax>();
+			public final HashMap<Integer, NodoMiniMax> REFERENCIAS = new HashMap<Integer, NodoMiniMax>();
 			
 			public final Point ULTIMA_POSICAO_JOGADA;
 			public final ContextoDoJogo CONTEXTO_DO_JOGO;
@@ -146,7 +124,7 @@ public class InteligenciaArtificial extends Jogador{
 				ULTIMA_POSICAO_JOGADA = _ultimaPosicaoJogada;
 				CONTEXTO_DO_JOGO = _contextoDoJogo;
 				MEU_TURNO = CONTEXTO_DO_JOGO.ALINHAMENTO_DA_VEZ == ALINHAMENTO;
-				podaAlfaBeta = _podaAlfaBeta;
+				podaAlfaBeta = _podaAlfaBeta.clone();
 				utilidadeDoJogo = MEU_TURNO ? Integer.MIN_VALUE : Integer.MAX_VALUE;
 			}
 			
@@ -163,38 +141,54 @@ public class InteligenciaArtificial extends Jogador{
 					podaAlfaBeta[1] = utilidadeDoJogo;
 					melhorJogada = nodo.ULTIMA_POSICAO_JOGADA;
 				}
-				REFERENCIAS.add(nodo);
+				REFERENCIAS.put(nodo.ULTIMA_POSICAO_JOGADA.hashCode(), nodo);
 			}
 			
 			//completar
 			protected void funcaoDeUtilidade() {
+				utilidadeDoJogo = 0;
+				
+				for(Alinhamento alinhamento : Alinhamento.values()){
+					int utilidadeDoAlinhamento = 0;
+					
+					for(Point posicao : CONTEXTO_DO_JOGO.TABULEIRO.getConjuntoDePosicoesRelativoAsPecas(alinhamento, 0, false)){
+						 
+						for(Sentido sentido : Sentido.values()){
+							for(Direcao direcao : sentido.DIRECOES){
+								int modificadorPecasAliadas = 1;
 								
-				for(Point posicao : CONTEXTO_DO_JOGO.TABULEIRO.getConjuntoDePosicoesDasPecas(ALINHAMENTO)){
-					 
-					for(Sentido sentido : Sentido.values()){
-						for(Direcao direcao : sentido.DIRECOES){
-							int modificadorPecasAliadas = 1;
-							
-							for(int i=1; i < Gomoku.TAMANHO_SEQUENCIA_VITORIA; i++){
-								int utilidadeDaPosicao = Gomoku.TAMANHO_SEQUENCIA_VITORIA - (i-1);
-								
-								Point posicaoAuxiliar = new Point(
-									posicao.x + direcao.REFERENCIA_CARTESIANA.x * i,
-									posicao.x + direcao.REFERENCIA_CARTESIANA.y * i
-								);
-								
-								Peca pecaAuxiliar = CONTEXTO_DO_JOGO.TABULEIRO.getPeca(posicao);
-								if(pecaAuxiliar != null){
-									if(pecaAuxiliar.ALINHAMENTO == ALINHAMENTO)
-										modificadorPecasAliadas *= utilidadeDaPosicao;
-									else
+								for(int distancia=1; distancia < PROFUNDIDADE; distancia++){
+									int utilidadeDaPosicao = PROFUNDIDADE - (distancia-1);
+									
+									Point posicaoAuxiliar = direcao.transladar(posicao, distancia);
+									
+									try{
+										CONTEXTO_DO_JOGO.TABULEIRO.validarPosicaoExistente(posicaoAuxiliar);
+										CONTEXTO_DO_JOGO.TABULEIRO.validarPosicaoLivre(posicaoAuxiliar);
+									}
+									catch(IndexOutOfBoundsException e){
 										break;
-								}			
-								
-								utilidadeDoJogo += utilidadeDaPosicao * modificadorPecasAliadas;
+									}
+									catch(PosicaoOcupadaException e){
+										if(e.PECA.ALINHAMENTO == alinhamento){
+											modificadorPecasAliadas *= utilidadeDaPosicao;
+										}
+										else{
+											break;
+										}
+									}
+									
+									utilidadeDoAlinhamento += utilidadeDaPosicao * modificadorPecasAliadas;
+								}
 							}
 						}
 					}
+					if(alinhamento == ALINHAMENTO){
+						utilidadeDoJogo += utilidadeDoAlinhamento * PROFUNDIDADE;
+					}
+					else{
+						utilidadeDoJogo -= utilidadeDoAlinhamento;
+					}						
 				}
 				podaAlfaBeta[MEU_TURNO ? 0 : 1] = utilidadeDoJogo;
 			}

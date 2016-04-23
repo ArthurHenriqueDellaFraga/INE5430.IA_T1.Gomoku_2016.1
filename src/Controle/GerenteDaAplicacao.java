@@ -30,8 +30,9 @@ public class GerenteDaAplicacao{
 			switch(INTERFACE_DA_APLICACAO.iniciar()){							
 				case 0:		gomoku = new Gomoku(ConfiguracaoDeJogo.Humano_Humano); break;
 				
-				case 1:	
-				default:	gomoku = new Gomoku(ConfiguracaoDeJogo.Humano_Maquina); break;
+				case 1:		gomoku = new Gomoku(ConfiguracaoDeJogo.Humano_Maquina); break;
+				
+				default:	gomoku = new Gomoku(ConfiguracaoDeJogo.Debug); break;
 			}
 			
 			try{

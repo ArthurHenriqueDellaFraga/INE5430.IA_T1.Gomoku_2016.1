@@ -1,6 +1,7 @@
 package Enumeracao;
 
 import java.awt.Point;
+import java.util.ArrayList;
 
 public enum Sentido {
 	Vertical(new Direcao[]{ Direcao.Norte, Direcao.Sul }),
@@ -30,6 +31,23 @@ public enum Sentido {
 		
 		Direcao(Point _referenciaCartesiana){
 			REFERENCIA_CARTESIANA = _referenciaCartesiana;
+		}
+		
+		//FUNCOES
+		
+		public Point transladar(Point posicao, int distancia){
+			return new Point(
+					posicao.x + REFERENCIA_CARTESIANA.x * distancia,
+					posicao.x + REFERENCIA_CARTESIANA.y * distancia
+				);
+		}
+		
+		public ArrayList<Point> listaDePosicoesAdjacentes(Point posicao, int distancia){
+			return new ArrayList<Point>(){{
+				for(int i=1; i < distancia; i++){
+					add(transladar(posicao, i));
+				}
+			}};
 		}
 	}
 }

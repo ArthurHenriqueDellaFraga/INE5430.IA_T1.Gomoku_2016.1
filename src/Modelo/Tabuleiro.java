@@ -9,6 +9,7 @@ import org.omg.PortableInterceptor.SYSTEM_EXCEPTION;
 import Controle.TabuleiroControle;
 import Enumeracao.Alinhamento;
 import Enumeracao.Sentido;
+import Enumeracao.Sentido.Direcao;
 import Excecao.PosicaoOcupadaException;
 import Primitiva.Peca;
 
@@ -44,12 +45,33 @@ public class Tabuleiro {
 		return CONFIGURACAO.get(peca);
 	}
 	
-	public HashSet<Point> getConjuntoDePosicoesDasPecas(Alinhamento alinhamento){
+	public HashSet<Point> getConjuntoDePosicoesRelativoAsPecas(Alinhamento alinhamento, int distancia, boolean apenasPosicoesLivres){
 		HashSet<Point> conjuntoDePosicoes = new HashSet<Point>();
 		
 		for(Peca peca : CONFIGURACAO.keySet()){
-			if(peca.ALINHAMENTO == alinhamento)
-				conjuntoDePosicoes.add(getPosicao(peca));
+			if(peca.ALINHAMENTO == alinhamento){
+				Point posicao = getPosicao(peca);
+				
+				if(distancia > 0){
+					for(Sentido sentido : Sentido.values()){
+						for(Direcao direcao : sentido.DIRECOES){
+							
+							Point posicaoAuxiliar = direcao.transladar(posicao, distancia);
+							
+							try{
+								this.validarPosicaoExistente(posicaoAuxiliar);
+								if(apenasPosicoesLivres) this.validarPosicaoLivre(posicaoAuxiliar);
+								conjuntoDePosicoes.add(posicaoAuxiliar);
+							} 
+							catch(IndexOutOfBoundsException e){	}
+							catch(PosicaoOcupadaException e) { }
+						}
+					}
+				}
+				else{
+					conjuntoDePosicoes.add(posicao);
+				}
+			}
 		}
 		
 		return conjuntoDePosicoes;
@@ -77,7 +99,7 @@ public class Tabuleiro {
 
 	protected void validarPosicaoLivre(Point posicao) throws PosicaoOcupadaException {
 		if(ESTRUTURA.containsKey(posicao.hashCode())){
-			throw new PosicaoOcupadaException();
+			throw new PosicaoOcupadaException(ESTRUTURA.get(posicao.hashCode()));
 		}
 	}
 	
@@ -85,5 +107,9 @@ public class Tabuleiro {
 	
 	public Tabuleiro clone(){
 		return new Tabuleiro(this);
+	}
+	
+	public boolean isEmpty(){
+		return CONFIGURACAO.isEmpty();
 	}
 }
