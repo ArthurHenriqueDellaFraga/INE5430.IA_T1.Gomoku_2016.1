@@ -1,6 +1,5 @@
 package Modelo;
 
-import java.awt.Point;
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -64,13 +63,8 @@ public class Gomoku {
 		for (Sentido sentido : Sentido.values()){
 			int tamanhoSequencia = 1;
 			for (Direcao direcao : sentido.DIRECOES) {
-				Point posicaoAtual = (Point) jogada.POSICAO.clone();
-				
-				for(int i = 0; i < TAMANHO_SEQUENCIA_VITORIA; i++){
-					posicaoAtual.translate(
-						direcao.REFERENCIA_CARTESIANA.x,
-						direcao.REFERENCIA_CARTESIANA.y
-					);
+				for(int distancia = 1 ; distancia < TAMANHO_SEQUENCIA_VITORIA; distancia++){
+					Posicao posicaoAtual = direcao.transladar(jogada.POSICAO, distancia);
 					
 					if(TABULEIRO.getPeca(posicaoAtual) != null && TABULEIRO.getPeca(posicaoAtual).ALINHAMENTO == jogada.PECA.ALINHAMENTO){
 						tamanhoSequencia += 1;

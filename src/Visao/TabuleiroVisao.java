@@ -9,12 +9,13 @@ import Controle.TabuleiroControle;
 import Enumeracao.Alinhamento;
 import PadraoDeProjeto.Propagador;
 import Primitiva.Peca;
+import Primitiva.Posicao;
 
 //Adaptado de http://cs.gettysburg.edu/~tneller/cs111/gomoku/
 public class TabuleiroVisao extends JPanel {
 	private final TabuleiroControle CONTROLE;
 	
-	public final Propagador<Point> PROPAGADOR = new Propagador<Point>();
+	public final Propagador<Posicao> PROPAGADOR = new Propagador<Posicao>();
 	
 	private final int MARGIN = 5;
 	private final double PIECE_FRAC = 0.9;
@@ -86,7 +87,7 @@ public class TabuleiroVisao extends JPanel {
 			double panelHeight = getHeight();
 			double boardWidth = Math.min(panelWidth, panelHeight) - 2 * MARGIN;
 			double squareWidth = boardWidth / tamanho;
-			//double pieceDiameter = PIECE_FRAC * squareWidth;
+			double pieceDiameter = PIECE_FRAC * squareWidth;
 			double xLeft = (panelWidth - boardWidth) / 2 + MARGIN;
 			double yTop = (panelHeight - boardWidth) / 2 + MARGIN;
 			
@@ -94,7 +95,7 @@ public class TabuleiroVisao extends JPanel {
 			int col = (int) Math.round((e.getX() - xLeft) / squareWidth - 0.5);
 			int row = (int) Math.round((e.getY() - yTop) / squareWidth - 0.5);
 			
-			PROPAGADOR.propagar(new Point(row, col));
+			PROPAGADOR.propagar(new Posicao(row, col));
 		}
 	}
 }

@@ -1,9 +1,8 @@
 package Controle;
 
-import java.awt.Point;
-
 import Modelo.Tabuleiro;
 import Primitiva.Peca;
+import Primitiva.Posicao;
 import Visao.TabuleiroVisao;
 
 public class TabuleiroControle {
@@ -24,10 +23,10 @@ public class TabuleiroControle {
 	//FUNCOES
 
 	public Peca getPeca(int linha, int coluna) {
-		return TABULEIRO.getPeca(new Point(linha, coluna));
+		return TABULEIRO.getPeca(new Posicao(linha, coluna));
 	}
 
-	public Point coletarPosicaoDoTabuleiro() {
+	public Posicao coletarPosicaoDoTabuleiro() {
 		return VISAO.PROPAGADOR.sintonizar();
 	}
 

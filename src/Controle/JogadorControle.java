@@ -1,13 +1,13 @@
 package Controle;
 
-import java.awt.Point;
+import Primitiva.Posicao;
 
 public class JogadorControle {
 	public TabuleiroControle TABULEIRO_CONTROLE;
 	
 	// FUNCOES
 
-	public Point coletarPosicaoDoTabuleiro() {
+	public Posicao coletarPosicaoDoTabuleiro() {
 		return TABULEIRO_CONTROLE.coletarPosicaoDoTabuleiro();
 	}
 }

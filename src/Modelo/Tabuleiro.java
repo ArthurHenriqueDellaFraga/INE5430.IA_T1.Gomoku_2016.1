@@ -1,10 +1,7 @@
 package Modelo;
 
-import java.awt.Point;
 import java.util.HashMap;
 import java.util.HashSet;
-
-import org.omg.PortableInterceptor.SYSTEM_EXCEPTION;
 
 import Controle.TabuleiroControle;
 import Enumeracao.Alinhamento;
@@ -12,51 +9,52 @@ import Enumeracao.Sentido;
 import Enumeracao.Sentido.Direcao;
 import Excecao.PosicaoOcupadaException;
 import Primitiva.Peca;
+import Primitiva.Posicao;
 
 public class Tabuleiro {
 	protected final TabuleiroControle CONTROLE;
 	
 	private final HashMap<Integer, Peca> ESTRUTURA;
-	private final HashMap<Peca, Point> CONFIGURACAO;
+	private final HashMap<Peca, Posicao> CONFIGURACAO;
 	public final int TAMANHO = 15;
 	
 	public Tabuleiro(){
 		CONTROLE = new TabuleiroControle(this);
 		
 		ESTRUTURA = new HashMap<Integer, Peca>();
-		CONFIGURACAO = new HashMap<Peca, Point>();
+		CONFIGURACAO = new HashMap<Peca, Posicao>();
 	}
 	
 	private Tabuleiro(Tabuleiro tabuleiro){
 		CONTROLE = null;
 		
 		ESTRUTURA = new HashMap<Integer, Peca>(tabuleiro.ESTRUTURA);
-		CONFIGURACAO = new  HashMap<Peca, Point>(tabuleiro.CONFIGURACAO);
+		CONFIGURACAO = new  HashMap<Peca, Posicao>(tabuleiro.CONFIGURACAO);
 	}
 	
 	//ACESSO
 		
-	public Peca getPeca(Point posicao) {
+	public Peca getPeca(Posicao posicao) {
 		return ESTRUTURA.get(posicao.hashCode());
 	}
 	
 	
-	public Point getPosicao(Peca peca) {
+	public Posicao getPosicao(Peca peca) {
 		return CONFIGURACAO.get(peca);
 	}
 	
-	public HashSet<Point> getConjuntoDePosicoesRelativoAsPecas(Alinhamento alinhamento, int distancia, boolean apenasPosicoesLivres){
-		HashSet<Point> conjuntoDePosicoes = new HashSet<Point>();
+	public HashSet<Posicao> getConjuntoDePosicoesRelativoAsPecas(Alinhamento alinhamento, int distancia, boolean apenasPosicoesLivres){
+		HashSet<Posicao> conjuntoDePosicoes = new HashSet<Posicao>();
 		
 		for(Peca peca : CONFIGURACAO.keySet()){
 			if(peca.ALINHAMENTO == alinhamento){
-				Point posicao = getPosicao(peca);
+				Posicao posicao = getPosicao(peca);
 				
 				if(distancia > 0){
 					for(Sentido sentido : Sentido.values()){
 						for(Direcao direcao : sentido.DIRECOES){
 							
-							Point posicaoAuxiliar = direcao.transladar(posicao, distancia);
+							Posicao posicaoAuxiliar = direcao.transladar(posicao, distancia);
 							
 							try{
 								this.validarPosicaoExistente(posicaoAuxiliar);
@@ -79,7 +77,7 @@ public class Tabuleiro {
 
 	//FUNCOES
 	
-	public void adicionar(Point posicao, Peca peca) throws PosicaoOcupadaException, IndexOutOfBoundsException{
+	public void adicionar(Posicao posicao, Peca peca) throws PosicaoOcupadaException, IndexOutOfBoundsException{
 		validarPosicaoExistente(posicao);
 		validarPosicaoLivre(posicao);
 		
@@ -91,13 +89,13 @@ public class Tabuleiro {
 	
 	//VALIDACOES
 
-	protected void validarPosicaoExistente(Point posicao) throws IndexOutOfBoundsException{
+	protected void validarPosicaoExistente(Posicao posicao) throws IndexOutOfBoundsException{
 		if(posicao.x < 0 || posicao.x > TAMANHO || posicao.y < 0 || posicao.y > TAMANHO){
 				throw new IndexOutOfBoundsException("A posicao escolhida esta fora das dimensoes do tabuleiro.");
 		}
 	}
 
-	protected void validarPosicaoLivre(Point posicao) throws PosicaoOcupadaException {
+	protected void validarPosicaoLivre(Posicao posicao) throws PosicaoOcupadaException {
 		if(ESTRUTURA.containsKey(posicao.hashCode())){
 			throw new PosicaoOcupadaException(ESTRUTURA.get(posicao.hashCode()));
 		}

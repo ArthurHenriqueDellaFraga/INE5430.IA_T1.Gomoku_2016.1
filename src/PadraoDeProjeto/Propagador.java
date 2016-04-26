@@ -1,6 +1,5 @@
 package PadraoDeProjeto;
 
-import java.awt.Point;
 import java.util.HashSet;
 
 public class Propagador<T> {
