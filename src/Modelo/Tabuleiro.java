@@ -13,101 +13,111 @@ import Primitiva.Posicao;
 
 public class Tabuleiro {
 	protected final TabuleiroControle CONTROLE;
-	
+
 	private final HashMap<Integer, Peca> ESTRUTURA;
 	private final HashMap<Peca, Posicao> CONFIGURACAO;
 	public final int TAMANHO = 15;
-	
-	public Tabuleiro(){
-		CONTROLE = new TabuleiroControle(this);
-		
-		ESTRUTURA = new HashMap<Integer, Peca>();
-		CONFIGURACAO = new HashMap<Peca, Posicao>();
+
+	public Tabuleiro() {
+		this.CONTROLE = new TabuleiroControle(this);
+
+		this.ESTRUTURA = new HashMap<Integer, Peca>();
+		this.CONFIGURACAO = new HashMap<Peca, Posicao>();
 	}
-	
-	private Tabuleiro(Tabuleiro tabuleiro){
-		CONTROLE = null;
-		
-		ESTRUTURA = new HashMap<Integer, Peca>(tabuleiro.ESTRUTURA);
-		CONFIGURACAO = new  HashMap<Peca, Posicao>(tabuleiro.CONFIGURACAO);
+
+	private Tabuleiro(Tabuleiro tabuleiro) {
+		this.CONTROLE = null;
+
+		this.ESTRUTURA = new HashMap<Integer, Peca>(tabuleiro.ESTRUTURA);
+		this.CONFIGURACAO = new HashMap<Peca, Posicao>(tabuleiro.CONFIGURACAO);
 	}
-	
-	//ACESSO
-		
+
+	// ACESSO
+
 	public Peca getPeca(Posicao posicao) {
-		return ESTRUTURA.get(posicao.hashCode());
+		Peca peca = this.ESTRUTURA.get(posicao.hashCode());
+		if (peca == null) {
+			return new Peca(Alinhamento.Vazio);
+		}
+		return peca;
 	}
-	
-	
+
 	public Posicao getPosicao(Peca peca) {
-		return CONFIGURACAO.get(peca);
+		return this.CONFIGURACAO.get(peca);
 	}
-	
-	public HashSet<Posicao> getConjuntoDePosicoesRelativoAsPecas(Alinhamento alinhamento, int distancia, boolean apenasPosicoesLivres){
+
+	public HashSet<Posicao> getConjuntoDePosicoesRelativoAsPecas(Alinhamento alinhamento, int distancia, boolean apenasPosicoesLivres) {
 		HashSet<Posicao> conjuntoDePosicoes = new HashSet<Posicao>();
-		
-		for(Peca peca : CONFIGURACAO.keySet()){
-			if(peca.ALINHAMENTO == alinhamento){
-				Posicao posicao = getPosicao(peca);
-				
-				if(distancia > 0){
-					for(Sentido sentido : Sentido.values()){
-						for(Direcao direcao : sentido.DIRECOES){
-							
+
+		for (Peca peca : this.CONFIGURACAO.keySet()) {
+			if (peca.ALINHAMENTO == alinhamento) {
+				Posicao posicao = this.getPosicao(peca);
+
+				if (distancia > 0) {
+					for (Sentido sentido : Sentido.values()) {
+						for (Direcao direcao : sentido.DIRECOES) {
+
 							Posicao posicaoAuxiliar = direcao.transladar(posicao, distancia);
-							
-							try{
+
+							try {
 								this.validarPosicaoExistente(posicaoAuxiliar);
-								if(apenasPosicoesLivres) this.validarPosicaoLivre(posicaoAuxiliar);
+								if (apenasPosicoesLivres) {
+									this.validarPosicaoLivre(posicaoAuxiliar);
+								}
 								conjuntoDePosicoes.add(posicaoAuxiliar);
-							} 
-							catch(IndexOutOfBoundsException e){	}
-							catch(PosicaoOcupadaException e) { }
+							} catch (IndexOutOfBoundsException e) {
+							} catch (PosicaoOcupadaException e) {
+							}
 						}
 					}
-				}
-				else{
+				} else {
 					conjuntoDePosicoes.add(posicao);
 				}
 			}
 		}
-		
+
 		return conjuntoDePosicoes;
 	}
 
-	//FUNCOES
-	
-	public void adicionar(Posicao posicao, Peca peca) throws PosicaoOcupadaException, IndexOutOfBoundsException{
-		validarPosicaoExistente(posicao);
-		validarPosicaoLivre(posicao);
-		
-		ESTRUTURA.put(posicao.hashCode(), peca);
-		CONFIGURACAO.put(peca, posicao);
-		
-		CONTROLE.atualizarVisualizacao();
-	}
-	
-	//VALIDACOES
+	// FUNCOES
 
-	protected void validarPosicaoExistente(Posicao posicao) throws IndexOutOfBoundsException{
-		if(posicao.x < 0 || posicao.x > TAMANHO || posicao.y < 0 || posicao.y > TAMANHO){
-				throw new IndexOutOfBoundsException("A posicao escolhida esta fora das dimensoes do tabuleiro.");
+	public void adicionar(Posicao posicao, Peca peca) throws PosicaoOcupadaException, IndexOutOfBoundsException {
+		this.validarPosicaoExistente(posicao);
+		this.validarPosicaoLivre(posicao);
+
+		this.ESTRUTURA.put(posicao.hashCode(), peca);
+		this.CONFIGURACAO.put(peca, posicao);
+		this.CONTROLE.atualizarVisualizacao();
+	}
+
+	// VALIDACOES
+
+	protected void validarPosicaoExistente(Posicao posicao) throws IndexOutOfBoundsException {
+		if (posicao.x < 0 || posicao.x > this.TAMANHO || posicao.y < 0 || posicao.y > this.TAMANHO) {
+			throw new IndexOutOfBoundsException("A posicao escolhida esta fora das dimensoes do tabuleiro.");
 		}
 	}
 
 	protected void validarPosicaoLivre(Posicao posicao) throws PosicaoOcupadaException {
-		if(ESTRUTURA.containsKey(posicao.hashCode())){
-			throw new PosicaoOcupadaException(ESTRUTURA.get(posicao.hashCode()));
+		if (this.ESTRUTURA.containsKey(posicao.hashCode())) {
+			throw new PosicaoOcupadaException(this.ESTRUTURA.get(posicao.hashCode()));
 		}
 	}
-	
-	//OUTROS
-	
-	public Tabuleiro clone(){
+
+	public Peca getPecaVizinhaNaDirecao(Peca peca, Direcao direcao) {
+		Posicao posicao = this.getPosicao(peca);
+		posicao.translate(direcao.REFERENCIA_CARTESIANA.x, direcao.REFERENCIA_CARTESIANA.y);
+		return this.getPeca(posicao);
+	}
+
+	// OUTROS
+
+	@Override
+	public Tabuleiro clone() {
 		return new Tabuleiro(this);
 	}
-	
-	public boolean isEmpty(){
-		return CONFIGURACAO.isEmpty();
+
+	public boolean isEmpty() {
+		return this.CONFIGURACAO.isEmpty();
 	}
 }

@@ -9,31 +9,31 @@ public class TabuleiroControle {
 	private final Tabuleiro TABULEIRO;
 	private TabuleiroVisao VISAO;
 
-	public TabuleiroControle(Tabuleiro _tabuleiro){
-		TABULEIRO = _tabuleiro;
-		VISAO = new TabuleiroVisao(this);
+	public TabuleiroControle(Tabuleiro _tabuleiro) {
+		this.TABULEIRO = _tabuleiro;
+		this.VISAO = new TabuleiroVisao(this);
 	}
-	
-	//ACESSO
+
+	// ACESSO
 
 	public int getTamanho() {
-		return TABULEIRO.TAMANHO;
+		return this.TABULEIRO.TAMANHO;
 	}
-	
-	//FUNCOES
+
+	// FUNCOES
 
 	public Peca getPeca(int linha, int coluna) {
-		return TABULEIRO.getPeca(new Posicao(linha, coluna));
+		return this.TABULEIRO.getPeca(new Posicao(linha, coluna));
 	}
 
 	public Posicao coletarPosicaoDoTabuleiro() {
-		return VISAO.PROPAGADOR.sintonizar();
+		return this.VISAO.PROPAGADOR.sintonizar();
 	}
 
 	public void atualizarVisualizacao() {
-		VISAO.repaint();
-		
+		this.VISAO.repaint();
+
 	}
-	
-	//SUBCLASSES
+
+	// SUBCLASSES
 }
